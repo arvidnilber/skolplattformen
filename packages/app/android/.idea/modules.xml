@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Skolplattformen.iml" filepath="$PROJECT_DIR$/.idea/modules/Skolplattformen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Skolplattformen.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Skolplattformen.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1488543607/Skolplattformen.react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/1488543607/Skolplattformen.react-native-gesture-handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1330458693/Skolplattformen.react-native-reanimated.iml" filepath="$PROJECT_DIR$/.idea/modules/1330458693/Skolplattformen.react-native-reanimated.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/917665312/Skolplattformen.react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/917665312/Skolplattformen.react-native-safe-area-context.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1212481080/Skolplattformen.react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/1212481080/Skolplattformen.react-native-screens.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1820781931/Skolplattformen.react-native-svg.iml" filepath="$PROJECT_DIR$/.idea/modules/-1820781931/Skolplattformen.react-native-svg.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,14 @@
+com/skolplattformen/BuildConfig.java
+ com.skolplattformen.BuildConfig
+com/skolplattformen/ReactNativeFlipper.java
+ com.skolplattformen.ReactNativeFlipper
+ com.skolplattformen.ReactNativeFlipper$1
+ com.skolplattformen.ReactNativeFlipper$2
+ com.skolplattformen.ReactNativeFlipper$2$1
+com/skolplattformen/MainApplication.java
+ com.skolplattformen.MainApplication
+ com.skolplattformen.MainApplication$1
+com/skolplattformen/MainActivity.java
+ com.skolplattformen.MainActivity
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList

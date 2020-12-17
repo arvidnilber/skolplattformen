@@ -1,0 +1,4 @@
+#Thu Dec 17 18:51:19 CET 2020
+base.0=/Users/johanobrink/src/personal/kolplattformen/api/packages/app/android/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
