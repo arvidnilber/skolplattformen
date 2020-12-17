@@ -1,0 +1,5 @@
+{
+  "inputPath": "../api/spec/skolplattformen-1.0.0.yaml",
+  "outputPath": "./api",
+  "generator": "@openapi-generator-plus/typescript-fetch-client-generator"
+}
