@@ -66,7 +66,7 @@ export const childDetails = (child) => {
     }
   }).startWith([])
 
-  return Observble.combineAll(news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
+  return Observble.zipAll(news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
 }
 
 const zipChildDetails = (news, calendar, notifications, schedule, classmates, menu) => {
