@@ -69,7 +69,7 @@ export const childDetails = (child) => {
     }
   }).startWith([])
 
-  return Observble.zipAll(Observable.of(child), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
+  return Observble.zipAll(Observable.of(child).repeat(1), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
 }
 
 const zipChildDetails = (child, news, calendar, notifications, schedule, classmates, menu) => {
