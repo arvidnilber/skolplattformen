@@ -14,6 +14,9 @@ export const loadChildrenDetails = async (children, what = {news: true}) => awai
   menu: !what.menu ? child.menu : await api.getMenu(child).catch(err => [{err}]),
 })))
 
+export const childrenWithDetails = (children) => Observble.from(children).flatMap(childDetails)
+
+// TODO Add better error handling perhaps?
 export const childDetails = (child) => {
   const news = Observable.defer(async () => {
     try {
