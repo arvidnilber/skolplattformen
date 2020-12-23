@@ -1,5 +1,7 @@
 import moment from 'moment'
+import Observble from 'rxjs'
 import init from "@skolplattformen/embedded-api"
+import { not } from 'react-native-reanimated'
 export const api = init(fetch)  // keep a static version of this object so we can keep the session alive
 
 export const loadChildrenDetails = async (children, what = {news: true}) => await Promise.all(children.map(async child => ({
@@ -12,3 +14,61 @@ export const loadChildrenDetails = async (children, what = {news: true}) => awai
   menu: !what.menu ? child.menu : await api.getMenu(child).catch(err => [{err}]),
 })))
 
+export const childDetails = (child) => {
+  const news = Observable.defer(async () => {
+    try {
+      return api.getNews(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([]);
+  
+  const calendar = Observble.defer(async () => {
+    try {
+      return api.getCalendar(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([])
+
+  const notification = Observble.defer(async () => {
+    try {
+      return api.getNotifications(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([])
+
+
+  const schedule = Observble.defer(async () => {
+    try {
+      return api.getSchedule(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([])
+
+
+  const classmates = Observble.defer(async () => {
+    try {
+      return api.getClassmates(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([])
+
+
+  const menu = Observble.defer(async () => {
+    try {
+      return api.getMenu(child);
+    } catch(e) {
+      return Promise.resolve([]);
+    }
+  }).startWith([])
+
+  return Observble.combineAll(news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
+}
+
+const zipChildDetails = (news, calendar, notifications, schedule, classmates, menu) => {
+  return {news, calendar, notifications, schedule, classmates, menu}
+}
