@@ -1,5 +1,5 @@
 import moment from 'moment'
-import Observble from 'rxjs'
+import { defer, zipAll, of, from } from 'rxjs/operators'
 import init from "@skolplattformen/embedded-api"
 import { not } from 'react-native-reanimated'
 export const api = init(fetch)  // keep a static version of this object so we can keep the session alive
@@ -14,44 +14,44 @@ export const loadChildrenDetails = async (children, what = {news: true}) => awai
   menu: !what.menu ? child.menu : await api.getMenu(child).catch(err => [{err}]),
 })))
 
-export const childrenWithDetails = (children, what = {news: true}) => Observble.from(children).flatMap(childDetails)
+export const childrenWithDetails = (children, what = {news: true}) => from(children).mergeMap((c) => childDetails(c, what))
 
 // TODO Add better error handling perhaps?
-export const childDetails = (child) => {
-  const news = Observable.defer(async () => {
+export const childDetails = (child, what) => {
+  const news = defer(async () => {
     if (!what.news) return Promise.resolve(child.news)
     return api.getNews(child);
   }).startWith([]);
   
-  const calendar = Observble.defer(async () => {
+  const calendar = defer(async () => {
     if (!what.calendar) return Promise.resolve(child.calendar)
     return api.getCalendar(child);
   }).startWith([])
 
-  const notifications = Observble.defer(async () => {
+  const notifications = defer(async () => {
     if (!what.notifications) return Promise.resolve(child.notifications)
     return api.getNotifications(child);
   }).startWith([])
 
 
-  const schedule = Observble.defer(async () => {
+  const schedule = defer(async () => {
     if (!what.schedule) return Promise.resolve(child.schedule)
     return api.getSchedule(child);
   }).startWith([])
 
 
-  const classmates = Observble.defer(async () => {
+  const classmates = defer(async () => {
     if (!what.classmates) return Promise.resolve(child.classmates)
     return api.getClassmates(child)
   }).startWith([])
 
 
-  const menu = Observble.defer(async () => {
+  const menu = defer(async () => {
     if (!what.menu) return Promise.resolve(child.menu)
     return api.getMenu(child)
   }).startWith([])
 
-  return Observble.zipAll(Observable.of(child).repeat(1), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
+  return zipAll(of(child).repeat(1), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
 }
 
 const zipChildDetails = (child, news, calendar, notifications, schedule, classmates, menu) => {
