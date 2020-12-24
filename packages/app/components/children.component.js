@@ -4,14 +4,10 @@ import { SafeAreaView } from 'react-native'
 import moment from 'moment'
 import { Divider, Button, Icon, Layout, Text, TopNavigation, TopNavigationAction, List, Card, Avatar, Spinner } from '@ui-kitten/components'
 // import children from '../output.json'
-<<<<<<< HEAD
 import {useAsyncStorage} from 'use-async-storage'
 import {api, childrenWithDetails} from '../lib/backend'
-=======
-import { useAsyncStorage } from 'use-async-storage'
-import { api, childrenWithDetails } from '../lib/backend'
-import { Observable } from 'rxjs'
->>>>>>> 67a81a4ff164755bddc4b8157ad3d1c78df5a29f
+import { Observable, defer } from 'rxjs'
+import { flatMap } from 'rxjs/operators'
 
 const colors = ['primary', 'success', 'info', 'warning', 'danger']
 
@@ -37,39 +33,31 @@ export const Children = ({ navigation }) => {
   useEffect(() => {
     const subscription = Observable.defer(async () => {
       try {
-<<<<<<< HEAD
         const childrenList = children?.length || await api.getChildren()
         console.log('got children', childrenList)
         if (!childrenList?.length) {
-=======
-        return api.getChildren()
-      } catch (e) {
-        console.log('err', e)
-        return Promise.resolve([])
-      }
-    }).mergeMap((c) => childrenWithDetails(c)).subscribe(
-      (c) => {
-        if (!c?.length) {
->>>>>>> 67a81a4ff164755bddc4b8157ad3d1c78df5a29f
-          console.log('no children found')
-          navigation.navigate('Login', { error: 'Hittar inga barn med det personnumret' })
+          return [];
         }
 
-<<<<<<< HEAD
-        childrenWithDetails(childrenList).subscribe(setChildren)
-  
+        return childrenList
       } catch (err) {
-        console.log('err', err)
-        navigation.navigate('Login', {error: 'Fel uppstod, försök igen'})
-=======
-        setChildren(c)
-      },
-      (e) => {
-        console.log('err', e)
-        navigation.navigate('Login', { error: 'Fel uppstod, försök igen' })
->>>>>>> 67a81a4ff164755bddc4b8157ad3d1c78df5a29f
+        return Observable.error(err)
       }
-    )
+    })
+    .flatMap((childrenList) => {
+      return childrenWithDetails(childrenList)
+    })
+    .subscribe((childrenList) => {
+      if (childrenList.length == 0) {
+        console.log('no children found')
+        navigation.navigate('Login', { error: 'Hittar inga barn med det personnumret' })  
+      }
+
+      setChildren(childrenList);
+    }, (err) => {
+      console.log('err', err)
+      navigation.navigate('Login', {error: 'Fel uppstod, försök igen'})
+    })
 
     return () => subscription.unsubscribe()
   }, [api.isLoggedIn])
@@ -172,7 +160,6 @@ export const ChildrenView = ({ navigation, children, eva }) => {
             renderItem={renderItem} />
         </Layout>
           : <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-<<<<<<< HEAD
               <Image source={require('../assets/girls.png')} style={{height: 400, width: '100%'}}></Image>
               <View style={{flexDirection: 'row'}}>
                 <Spinner size='large' status="warning"/>
@@ -180,14 +167,6 @@ export const ChildrenView = ({ navigation, children, eva }) => {
               </View>
               <Text category='c2' style={{width: '60%', margin: 5}}>Första gången tar det lite tid men ha tålamod, sen går det jättesnabbt!</Text>
             </Layout>}
-=======
-            <Image source={require('../assets/girls.png')} style={{ height: 400, width: '100%' }}></Image>
-            <View style={{ flexDirection: 'row' }}>
-              <Spinner size='large' status="warning" />
-              <Text category='h1' style={{ marginLeft: 10, marginTop: -7 }}>Laddar...</Text>
-            </View>
-          </Layout>}
->>>>>>> 67a81a4ff164755bddc4b8157ad3d1c78df5a29f
 
       </Layout>
     </SafeAreaView>
