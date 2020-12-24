@@ -5,7 +5,7 @@ import moment from 'moment'
 import { Divider, Button, Icon, Layout, Text, TopNavigation, TopNavigationAction, List, Card, Avatar, Spinner } from '@ui-kitten/components'
 // import children from '../output.json'
 import {useAsyncStorage} from 'use-async-storage'
-import {api, loadChildrenDetails} from '../lib/backend'
+import {api, childrenWithDetails} from '../lib/backend'
 
 const colors = ['primary', 'success', 'info', 'warning', 'danger']
 
@@ -32,14 +32,13 @@ export const Children = ({navigation}) => {
     const load = async () => {
       try {
         const childrenList = children?.length || await api.getChildren()
+        console.log('got children', childrenList)
         if (!childrenList?.length) {
           console.log('no children found')
           return navigation.navigate('Login', {error: 'Hittar inga barn med det personnumret'})
         }
 
-        // Update the list with all details we get the most often updated info first
-        const fullChildren = await loadChildrenDetails(childrenList, {calendar: true, schedule: true, news: true, menu:true, notifications: true, classmates: true})
-        setChildren(fullChildren)
+        childrenWithDetails(childrenList).subscribe(setChildren)
   
       } catch (err) {
         console.log('err', err)
@@ -152,6 +151,7 @@ export const ChildrenView = ({ navigation, children, eva }) => {
                 <Spinner size='large' status="warning"/>
                 <Text category='h1' style={{marginLeft: 10, marginTop: -7}}>Laddar...</Text>
               </View>
+              <Text category='c2' style={{width: '60%', margin: 5}}>Första gången tar det lite tid men ha tålamod, sen går det jättesnabbt!</Text>
             </Layout>}
 
       </Layout>

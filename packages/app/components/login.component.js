@@ -22,6 +22,7 @@ export const Login = ({ navigation, route }) => {
 
   useEffect(() => {
     setValid(Personnummer.valid(socialSecurityNumber))
+    if (cookie) api.setSessionCookie(cookie)
   }, [socialSecurityNumber, cookie])
 
   useEffect(() => {

@@ -1,77 +1,53 @@
 import moment from 'moment'
-import Observble from 'rxjs'
+import { Observable, pipe } from 'rxjs'
+import { scan, mapTo, zipAll } from 'rxjs/operators'
 import init from "@skolplattformen/embedded-api"
-import { not } from 'react-native-reanimated'
 export const api = init(fetch)  // keep a static version of this object so we can keep the session alive
 
-export const loadChildrenDetails = async (children, what = {news: true}) => await Promise.all(children.map(async child => ({
-  ...child,
-  news: !what.news ? child.news : await api.getNews(child).catch(err => [{err}]),
-  calendar: !what.calendar ? child.calendar : await api.getCalendar(child).catch(err => [{err}]),
-  notifications:  !what.notifications ? child.notifications : await api.getNotifications(child).catch(err => [{err}]),
-  schedule: !what.schedule ? child.schedule : await api.getSchedule(child, moment().startOf('day'), moment().add(7,'days').endOf('day')).catch(err => [{err}]),
-  classmates: !what.classmates ? child.classmates : await api.getClassmates(child).catch(err => [{err}]),
-  menu: !what.menu ? child.menu : await api.getMenu(child).catch(err => [{err}]),
-})))
-
-export const childrenWithDetails = (children) => Observble.from(children).flatMap(childDetails)
+export const childrenWithDetails = (children) => Observable.from(children).flatMap(child => childDetails(child))
 
 // TODO Add better error handling perhaps?
 export const childDetails = (child) => {
-  const news = Observable.defer(async () => {
-    try {
-      return api.getNews(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([]);
+  console.log('get details for ', child.name)
   
-  const calendar = Observble.defer(async () => {
-    try {
-      return api.getCalendar(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([])
+  const news = Observable.fromPromise(
+    api
+      .getNews(child)
+      .then(news => {news})
+  ).startWith([])
 
-  const notification = Observble.defer(async () => {
-    try {
-      return api.getNotifications(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([])
+  const calendar = Observable.fromPromise(
+    api
+      .getCalendar(child)
+      .then(calendar => {calendar})
+  ).startWith([])
 
+  const notifications = Observable.fromPromise(
+    api
+      .getNotifications(child)
+      .then(notifications => {notifications})
+  ).startWith([])
 
-  const schedule = Observble.defer(async () => {
-    try {
-      return api.getSchedule(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([])
+  const schedule = Observable.fromPromise(
+    api
+      .getSchedule(child)
+      .then(schedule => {schedule})
+  ).startWith([])
 
+  const classmates = Observable.fromPromise(
+    api
+      .getClassmates(child)
+      .then(classmates => {classmates})
+  ).startWith([])
 
-  const classmates = Observble.defer(async () => {
-    try {
-      return api.getClassmates(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([])
+  const menu = Observable.fromPromise(
+    api
+      .getMenu(child)
+      .then(menu => {menu})
+  ).startWith([])
 
-
-  const menu = Observble.defer(async () => {
-    try {
-      return api.getMenu(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
-  }).startWith([])
-
-  return Observble.zipAll(Observable.of(child).repeat(1), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
-}
-
-const zipChildDetails = (child, news, calendar, notifications, schedule, classmates, menu) => {
-  return {...child, news, calendar, notifications, schedule, classmates, menu}
+  return pipe( 
+    zipAll(Observable.from([child]), news, calendar, notifications, schedule, classmates, menu),
+    scan((child, update) => ({...child, ...update})) // merge the previous value with the updated one and emit the result
+  )
 }
