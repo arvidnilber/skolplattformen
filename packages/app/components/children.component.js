@@ -6,8 +6,8 @@ import { Divider, Button, Icon, Layout, Text, TopNavigation, TopNavigationAction
 // import children from '../output.json'
 import {useAsyncStorage} from 'use-async-storage'
 import {api, childrenWithDetails} from '../lib/backend'
-import { Observable, defer } from 'rxjs'
-import { flatMap } from 'rxjs/operators'
+import { defer, pipe } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
 const colors = ['primary', 'success', 'info', 'warning', 'danger']
 
@@ -31,22 +31,20 @@ export const Children = ({ navigation }) => {
   const [children, setChildren] = useAsyncStorage('@children', [])
 
   useEffect(() => {
-    const subscription = Observable.defer(async () => {
-      try {
-        const childrenList = children?.length || await api.getChildren()
-        console.log('got children', childrenList)
-        if (!childrenList?.length) {
-          return [];
-        }
-
-        return childrenList
-      } catch (err) {
-        return Observable.error(err)
+    const subscription = defer(async () => {
+      const childrenList = children?.length || await api.getChildren()
+      console.log('got children', childrenList)
+      if (!childrenList?.length) {
+        return [];
       }
+
+      return childrenList
     })
-    .flatMap((childrenList) => {
-      return childrenWithDetails(childrenList)
-    })
+    .pipe(
+      mergeMap((childrenList) => {
+        return childrenWithDetails(childrenList)
+      })
+    )
     .subscribe((childrenList) => {
       if (childrenList.length == 0) {
         console.log('no children found')
