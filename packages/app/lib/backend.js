@@ -14,59 +14,41 @@ export const loadChildrenDetails = async (children, what = {news: true}) => awai
   menu: !what.menu ? child.menu : await api.getMenu(child).catch(err => [{err}]),
 })))
 
-export const childrenWithDetails = (children) => Observble.from(children).flatMap(childDetails)
+export const childrenWithDetails = (children, what = {news: true}) => Observble.from(children).flatMap(childDetails)
 
 // TODO Add better error handling perhaps?
 export const childDetails = (child) => {
   const news = Observable.defer(async () => {
-    try {
-      return api.getNews(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+    if (!what.news) return Promise.resolve(child.news)
+    return api.getNews(child);
   }).startWith([]);
   
   const calendar = Observble.defer(async () => {
-    try {
-      return api.getCalendar(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+    if (!what.calendar) return Promise.resolve(child.calendar)
+    return api.getCalendar(child);
   }).startWith([])
 
-  const notification = Observble.defer(async () => {
-    try {
-      return api.getNotifications(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+  const notifications = Observble.defer(async () => {
+    if (!what.notifications) return Promise.resolve(child.notifications)
+    return api.getNotifications(child);
   }).startWith([])
 
 
   const schedule = Observble.defer(async () => {
-    try {
-      return api.getSchedule(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+    if (!what.schedule) return Promise.resolve(child.schedule)
+    return api.getSchedule(child);
   }).startWith([])
 
 
   const classmates = Observble.defer(async () => {
-    try {
-      return api.getClassmates(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+    if (!what.classmates) return Promise.resolve(child.classmates)
+    return api.getClassmates(child)
   }).startWith([])
 
 
   const menu = Observble.defer(async () => {
-    try {
-      return api.getMenu(child);
-    } catch(e) {
-      return Promise.resolve([]);
-    }
+    if (!what.menu) return Promise.resolve(child.menu)
+    return api.getMenu(child)
   }).startWith([])
 
   return Observble.zipAll(Observable.of(child).repeat(1), news, calendar, notifications, schedule, classmates, menu, zipChildDetails)
